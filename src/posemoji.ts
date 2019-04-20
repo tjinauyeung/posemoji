@@ -2,12 +2,18 @@ import * as posenet from "@tensorflow-models/posenet";
 import { PoseNet } from "@tensorflow-models/posenet";
 import { draw } from "./draw";
 
-const video = document.querySelector(".pose__video") as HTMLVideoElement;
-const canvas = document.querySelector(".pose__canvas") as HTMLCanvasElement;
+const video = document.querySelector(".posemoji__video") as HTMLVideoElement;
+const canvas = document.querySelector(".posemoji__canvas") as HTMLCanvasElement;
+const error = document.querySelector(".posemoji__err") as HTMLParagraphElement;
 
-function setupVideo(): Promise<HTMLVideoElement> {
+function setupVideo(): Promise<HTMLVideoElement> | null {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    error.innerHTML = "webcam access is not supported by this browser";
+    return;
+  }
+
   return navigator.mediaDevices
-    .getUserMedia({ video: true, audio: false })
+    .getUserMedia({ video: { facingMode: "user" }, audio: false })
     .then(stream => {
       video.srcObject = stream;
       return new Promise(resolve => {
