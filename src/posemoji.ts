@@ -5,6 +5,32 @@ import { draw } from "./draw";
 const video = document.querySelector(".posemoji__video") as HTMLVideoElement;
 const canvas = document.querySelector(".posemoji__canvas") as HTMLCanvasElement;
 const error = document.querySelector(".posemoji__err") as HTMLParagraphElement;
+const camSelect = document.querySelector(
+  ".posemoji__cam-select"
+) as HTMLSelectElement;
+
+let stream: MediaStream;
+camSelect.onchange = getStream;
+
+function getStream(e) {
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+  }
+
+  const constraints = {
+    audio: false,
+    video: {
+      deviceId: { exact: camSelect.value }
+    }
+  };
+
+  navigator.mediaDevices.getUserMedia(constraints).then(gotStream);
+}
+
+function gotStream(stream) {
+  stream = stream; // make stream available to console
+  video.srcObject = stream;
+}
 
 function setupVideo(): Promise<HTMLVideoElement> | null {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -45,12 +71,31 @@ function setDimensions(
 }
 
 function init() {
-  Promise.all([setupVideo(), setupPosenet()]).then(
-    ([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
-      const { width, height } = setDimensions(video, canvas);
-      draw(net, video, canvas, width, height);
-    }
-  );
+  setupCameraOptions().then(() => {
+    Promise.all([setupVideo(), setupPosenet()]).then(
+      ([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
+        const { width, height } = setDimensions(video, canvas);
+        draw(net, video, canvas, width, height);
+      }
+    );
+  });
+}
+
+const getCameraDevices = devices =>
+  devices.filter(device => device.kind === "videoinput");
+
+function setupCameraOptions() {
+  return navigator.mediaDevices
+    .enumerateDevices()
+    .then(getCameraDevices)
+    .then(cameraDevices => {
+      cameraDevices.forEach(device => {
+        const option = document.createElement("option");
+        option.value = device.deviceId;
+        option.text = device.label;
+        camSelect.appendChild(option);
+      });
+    });
 }
 
 init();

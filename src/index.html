@@ -3,22 +3,32 @@
     <title>Posemoji</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+      body {
+        font-family: monospace;
+        margin: 0;
+      }
+      .posemoji__wrapper {
+        position: relative;
+      }
       .posemoji__video {
-        opacity: 0;
+        position: absolute;
+        top: -100%;
+        visibility: hidden;
       }
       .posemoji__canvas {
         width: 100%;
         max-height: 100vh;
-        position: absolute;
-        top: 0;
-        left: 0;
       }
     </style>
   </head>
   <body>
     <p class="posemoji__err"></p>
-    <video class="posemoji__video"></video>
-    <canvas class="posemoji__canvas"></canvas>
+    <div class="posemoji__wrapper">
+      <canvas class="posemoji__canvas"></canvas>
+      <video class="posemoji__video"></video>
+    </div>
+    <label>Select 📷</label>
+    <select class="posemoji__cam-select"></select>
     <script src="posemoji.ts"></script>
   </body>
 </html>
