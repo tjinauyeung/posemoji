@@ -3,32 +3,59 @@
     <title>Posemoji</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        background: #111;
+      }
       body {
         font-family: monospace;
         margin: 0;
       }
-      .posemoji__wrapper {
+      .header {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #111;
+        color: #fff;
+      }
+      .form {
+        margin: 0;
+      }
+      .wrapper {
         position: relative;
       }
-      .posemoji__video {
+      #video {
         position: absolute;
         top: -100%;
         visibility: hidden;
       }
-      .posemoji__canvas {
+      #canvas {
         width: 100%;
-        max-height: 100vh;
+        max-height: calc(100vh - 60px);
       }
     </style>
   </head>
   <body>
-    <p class="posemoji__err"></p>
-    <div class="posemoji__wrapper">
-      <canvas class="posemoji__canvas"></canvas>
-      <video class="posemoji__video"></video>
+    <p id="error"></p>
+
+    <header class="header">
+      <span>P O S E M O J I</span>
+      <form class="form">
+        <label>Select 📷</label>
+        <select id="select"></select>
+      </form>
+    </header>
+
+    <div id="loading">loading</div>
+
+    <div class="wrapper">
+      <canvas id="canvas"></canvas>
+      <video id="video"></video>
     </div>
-    <label>Select 📷</label>
-    <select class="posemoji__cam-select"></select>
-    <script src="posemoji.ts"></script>
+
+    <script src="posemoji.ts" defer></script>
   </body>
 </html>

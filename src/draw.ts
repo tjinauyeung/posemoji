@@ -2,6 +2,7 @@ import { Keypoint, PoseNet } from "@tensorflow-models/posenet";
 
 const CANVAS_FONT = "80px Verdana";
 const EMOJI_OFFSET = 40;
+const EMOJI = "✕";
 
 const isLeftEye = (kp: Keypoint): boolean => kp.part === "leftEye";
 const isRightEye = (kp: Keypoint): boolean => kp.part === "rightEye";
@@ -36,7 +37,7 @@ export function draw(
           y = y + EMOJI_OFFSET;
 
           ctx.font = CANVAS_FONT;
-          ctx.fillText("❤️", x, y);
+          ctx.fillText(EMOJI, x, y);
         }
       });
     });
