@@ -4,11 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel ./src/index.html"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "parcel": "^1.12.3"
+    "parcel": "^1.12.3",
+    "typescript": "^3.4.4"
+  },
+  "dependencies": {
+    "@tensorflow-models/posenet": "^1.0.1",
+    "@tensorflow/tfjs": "^1.0.0"
   }
 }
