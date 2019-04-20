@@ -1,16 +1,23 @@
 <html>
   <head>
     <title>Posemoji</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       .wrapper {
         position: relative;
+        width: 100vw;
+        height: 100vh;
       }
-      .pose__canvas,
       .pose__video {
+        opacity: 0;
+      }
+      .pose__canvas {
         width: 100%;
         position: absolute;
         top: 0;
         left: 0;
+        bottom: 0;
+        right: 0;
       }
     </style>
   </head>
