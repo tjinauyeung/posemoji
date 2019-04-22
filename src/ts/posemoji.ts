@@ -6,9 +6,9 @@ let videoStream: MediaStream;
 
 function setupVideo(): Promise<HTMLVideoElement> | null {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    selectDOM.error.innerHTML =
-      "webcam access is not supported by this browser";
-    return;
+    throw new Error(
+      "Browser API navigator.mediaDevices.getUserMedia not available"
+    );
   }
 
   if (videoStream) {
@@ -65,6 +65,12 @@ const getCameraDevices = devices =>
   devices.filter(device => device.kind === "videoinput");
 
 function setupCameraOptions() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+    throw new Error(
+      "Browser API navigator.mediaDevices.enumerateDevices not available"
+    );
+  }
+
   return navigator.mediaDevices
     .enumerateDevices()
     .then(getCameraDevices)
@@ -75,31 +81,41 @@ function setupCameraOptions() {
         option.text = device.label;
         selectDOM.camSelect.appendChild(option);
       });
+    })
+    .catch(e => {
+      throw new Error(e);
     });
 }
 
-function init() {
-  return (
-    Promise.all([setupVideo(), setupPosenet()])
-      .then(([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
-        const { width, height } = setDimensions(video, selectDOM.canvas);
-        draw(net, video, selectDOM.canvas, width, height);
+function startPoseMoji() {
+  return Promise.all([setupVideo(), setupPosenet()])
+    .then(([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
+      const { width, height } = setDimensions(video, selectDOM.canvas);
+      draw(net, video, selectDOM.canvas, width, height);
 
-        // show content and start music
-        selectDOM.body.classList.add("loaded");
-        selectDOM.audio.play();
-      })
-      // tslint:disable-next-line
-      .catch(e => console.re.log(e))
-  );
+      // show content and start music
+      selectDOM.body.classList.add("loaded");
+      selectDOM.audio.play();
+    })
+    .catch(e => {
+      throw new Error(e);
+    });
 }
 
-selectDOM.camSelect.addEventListener("change", init);
+selectDOM.camSelect.addEventListener("change", startPoseMoji);
 
 window.addEventListener("DOMContentLoaded", () => {
-  setupCameraOptions();
-  init();
+  try {
+    setupCameraOptions();
+    startPoseMoji();
+  } catch (e) {
+    selectDOM.error.innerText =
+      "demo does not run on your device, try running on chrome on desktop";
+    // tslint:disable-next-line
+    console.re.log("failed to start project with", e);
+  }
 });
 
+// Using `https://console.re/posemoji` for remote logging
 // tslint:disable-next-line
-console.re.log("Connected to remote logging service");
+console.re.log("connected to remote logging service");
