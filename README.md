@@ -21,14 +21,9 @@ npm run build
 - [x] Use TensorFlow.js with a pre-trained model to detect human poses.
 - [x] Choose both emojis and body parts freely.
 - [x] The app should scale content to fit a window.
-- [x] There must be a single button to switch between all available cameras.
 - [x] Host the app on a free hosting under a public domain, e.g. GitHub Pages or Firebase Hosting.
-- [] The app should work on the newest stable version of a Chrome browser, both mobile and desktop.
+- [ ] There must be a single button to switch between all available cameras.
+- [ ] The app should work on the newest stable version of a Chrome browser, both mobile and desktop.
 
-#### TODO
-- [x] There must be a single button to switch between all available cameras. (WIP)
-- [] The app should work on the newest stable version of a Chrome browser, both mobile and desktop.
-  - App only works on desktop; Safari and Chrome on iphone does not support `navigator.mediaDevices`
-
-#### Refactor
-- [] Use async await instead of promises
+#### Optional refactoring
+- Use async await instead of promises

@@ -1,5 +1,4 @@
 import * as posenet from "@tensorflow-models/posenet";
-import { PoseNet } from "@tensorflow-models/posenet";
 import { selectDOM } from "./dom-selectors";
 import { draw } from "./draw";
 
@@ -20,9 +19,9 @@ function getStream(e) {
     .then(gotStream);
 }
 
-function gotStream(stream) {
-  stream = stream;
-  selectDOM.video.srcObject = stream;
+function gotStream(str) {
+  stream = str;
+  selectDOM.video.srcObject = str;
 }
 
 function setupVideo(): Promise<HTMLVideoElement> | null {
@@ -33,8 +32,8 @@ function setupVideo(): Promise<HTMLVideoElement> | null {
   }
   return navigator.mediaDevices
     .getUserMedia({ video: { facingMode: "user" }, audio: false })
-    .then(stream => {
-      selectDOM.video.srcObject = stream;
+    .then(strm => {
+      selectDOM.video.srcObject = strm;
       return new Promise(resolve => {
         selectDOM.video.onloadedmetadata = () => {
           selectDOM.video.play();
@@ -44,7 +43,7 @@ function setupVideo(): Promise<HTMLVideoElement> | null {
     });
 }
 
-function setupPosenet(): Promise<PoseNet> {
+function setupPosenet(): Promise<posenet.PoseNet> {
   return posenet.load(0.75);
 }
 

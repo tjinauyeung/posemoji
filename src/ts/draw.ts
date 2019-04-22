@@ -1,4 +1,5 @@
 import { Keypoint, PoseNet } from "@tensorflow-models/posenet";
+import { getRandomInt } from "./utils";
 
 const CANVAS_FONT = "60px Verdana";
 const EMOJI_OFFSET = 30;
@@ -10,7 +11,7 @@ interface Heart {
   font: string;
   x: number;
   y: number;
-  vy: number;
+  yVelocity: number;
 }
 
 const isLeftEye = (kp: Keypoint): boolean => kp.part === "leftEye";
@@ -25,7 +26,7 @@ export function draw(
   height: number
 ) {
   const ctx = canvas.getContext("2d");
-  const hearts = makeHearts(100, width, height);
+  const hearts = getHearts(100, width, height);
   const scaleFactor = 0.5;
   const flipHorizontal = false;
   const outputStride = 16;
@@ -62,25 +63,19 @@ function drawEyes(ctx: CanvasRenderingContext2D, kp: Keypoint) {
 function drawFloatingHearts(ctx: CanvasRenderingContext2D, heart: Heart) {
   ctx.font = heart.font;
   ctx.fillText(heart.emoji, heart.x, heart.y);
-  heart.y = heart.y - heart.vy;
+  heart.y = heart.y - heart.yVelocity;
 }
 
-function makeHearts(length: number, width: number, height: number): Heart[] {
-  return Array.from({ length }).map(() => makeHeart(width, height));
+function getHearts(length: number, width: number, height: number): Heart[] {
+  return Array.from({ length }).map(() => getHeart(width, height));
 }
 
-function makeHeart(width: number, height: number): Heart {
+function getHeart(width: number, height: number): Heart {
   return {
     emoji: EMOJI_HEART,
     font: `${getRandomInt(20, 40)}px Verdana`,
     x: getRandomInt(0, width),
     y: getRandomInt(0, height) + height,
-    vy: getRandomInt(1, 5)
+    yVelocity: getRandomInt(1, 5)
   };
-}
-
-function getRandomInt(min: number, max: number): number {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
 }
