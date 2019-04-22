@@ -80,7 +80,9 @@ function setupCameraOptions() {
     });
 }
 
-setupCameraOptions();
+function setLoaded() {
+  domSelectors.body.classList.add("loaded");
+}
 
 function init() {
   setupCameraOptions()
@@ -88,7 +90,8 @@ function init() {
     .then(([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
       const { width, height } = setDimensions(video, domSelectors.canvas);
       draw(net, video, domSelectors.canvas, width, height);
+      setLoaded();
     });
 }
 
-init();
+addEventListener("DOMContentLoaded", init);

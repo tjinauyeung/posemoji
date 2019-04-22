@@ -1,8 +1,8 @@
 import { Keypoint, PoseNet } from "@tensorflow-models/posenet";
 
-const CANVAS_FONT = "80px Verdana";
-const EMOJI_OFFSET = 40;
-const EMOJI = "✕";
+const CANVAS_FONT = "60px Verdana";
+const EMOJI_OFFSET = 30;
+const EMOJI_EYE = "❤️";
 
 const isLeftEye = (kp: Keypoint): boolean => kp.part === "leftEye";
 const isRightEye = (kp: Keypoint): boolean => kp.part === "rightEye";
@@ -31,13 +31,7 @@ export function draw(
 
       keypoints.forEach(kp => {
         if (isEye(kp)) {
-          let { x, y } = kp.position;
-
-          x = x - EMOJI_OFFSET;
-          y = y + EMOJI_OFFSET;
-
-          ctx.font = CANVAS_FONT;
-          ctx.fillText(EMOJI, x, y);
+          drawEmoji(ctx, kp, EMOJI_EYE);
         }
       });
     });
@@ -45,4 +39,14 @@ export function draw(
   requestAnimationFrame(() => {
     draw(net, video, canvas, width, height);
   });
+}
+
+function drawEmoji(ctx: CanvasRenderingContext2D, kp: Keypoint, emoji: string) {
+  let { x, y } = kp.position;
+
+  x = x - EMOJI_OFFSET;
+  y = y + EMOJI_OFFSET;
+
+  ctx.font = CANVAS_FONT;
+  ctx.fillText(emoji, x, y);
 }
