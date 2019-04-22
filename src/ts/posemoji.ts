@@ -2,27 +2,7 @@ import * as posenet from "@tensorflow-models/posenet";
 import { selectDOM } from "./dom-selectors";
 import { draw } from "./draw";
 
-let stream: MediaStream;
-selectDOM.camSelect.onchange = getStream;
-
-function getStream(e) {
-  if (stream) {
-    stream.getTracks().forEach(track => track.stop());
-  }
-  navigator.mediaDevices
-    .getUserMedia({
-      audio: false,
-      video: {
-        deviceId: { exact: selectDOM.camSelect.value }
-      }
-    })
-    .then(gotStream);
-}
-
-function gotStream(str) {
-  stream = str;
-  selectDOM.video.srcObject = str;
-}
+let videoStream: MediaStream;
 
 function setupVideo(): Promise<HTMLVideoElement> | null {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -30,17 +10,34 @@ function setupVideo(): Promise<HTMLVideoElement> | null {
       "webcam access is not supported by this browser";
     return;
   }
-  return navigator.mediaDevices
-    .getUserMedia({ video: { facingMode: "user" }, audio: false })
-    .then(strm => {
-      selectDOM.video.srcObject = strm;
-      return new Promise(resolve => {
-        selectDOM.video.onloadedmetadata = () => {
-          selectDOM.video.play();
-          resolve(selectDOM.video);
-        };
-      });
+
+  if (videoStream) {
+    videoStream.getTracks().forEach(track => track.stop());
+  }
+
+  return navigator.mediaDevices.getUserMedia(getConstraints()).then(stream => {
+    videoStream = stream;
+    selectDOM.video.srcObject = stream;
+    return new Promise(resolve => {
+      selectDOM.video.onloadedmetadata = () => {
+        selectDOM.video.play();
+        resolve(selectDOM.video);
+      };
     });
+  });
+}
+
+function getConstraints() {
+  if (videoStream) {
+    return {
+      audio: false,
+      video: { deviceId: { exact: selectDOM.camSelect.value } }
+    };
+  }
+  return {
+    audio: false,
+    video: { facingMode: "user" }
+  };
 }
 
 function setupPosenet(): Promise<posenet.PoseNet> {
@@ -80,15 +77,20 @@ function setupCameraOptions() {
 }
 
 function init() {
-  setupCameraOptions()
-    .then(() => Promise.all([setupVideo(), setupPosenet()]))
-    .then(([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
+  return Promise.all([setupVideo(), setupPosenet()]).then(
+    ([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
       const { width, height } = setDimensions(video, selectDOM.canvas);
       draw(net, video, selectDOM.canvas, width, height);
 
       selectDOM.body.classList.add("loaded");
       selectDOM.audio.play();
-    });
+    }
+  );
 }
 
-addEventListener("DOMContentLoaded", init);
+selectDOM.camSelect.addEventListener("change", init);
+
+window.addEventListener("DOMContentLoaded", () => {
+  setupCameraOptions();
+  init();
+});
