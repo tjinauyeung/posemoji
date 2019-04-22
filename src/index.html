@@ -2,82 +2,29 @@
   <head>
     <title>Posemoji</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-      * {
-        box-sizing: border-box;
-      }
-      html {
-        background: #111;
-      }
-      body {
-        font-family: monospace;
-        margin: 0;
-      }
-      .header {
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: #111;
-        color: #fff;
-      }
-      .form {
-        margin: 0;
-      }
-      .loader {
-        width: 100%;
-        height: calc(100vh - 60px);
-        background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .content {
-        position: relative;
-        visibility: hidden;
-      }
-      #video {
-        position: absolute;
-        top: -100%;
-        visibility: hidden;
-      }
-      #canvas {
-        width: 100%;
-      }
-      .loaded .loader {
-        display: none;
-      }
-      .loaded .content {
-        visibility: visible;
-      }
-      @media (max-width: 768px) {
-        .header span {
-          display: none;
-        }
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="index.css">
   </head>
   <body>
-    <p id="error"></p>
+    <p class="error"></p>
 
     <header class="header">
       <span>P O S E M O J I</span>
       <form class="form">
         <label>Select 📷</label>
-        <select id="select"></select>
+        <select class="select"></select>
       </form>
     </header>
 
     <div class="loader">loading...</div>
 
     <div class="content">
-      <canvas id="canvas"></canvas>
-      <video id="video"></video>
-      <audio id="audio" controls hidden>
-        <source src="static/minnie-riperton.mp3" type="audio/mp3">
+      <canvas class="canvas"></canvas>
+      <video class="video"></video>
+      <audio class="audio" hidden>
+        <source src="static/soundtrack.mp3" type="audio/mp3">
       </audio>
     </div>
 
-    <script src="posemoji.ts"></script>
+    <script src="./ts/posemoji.ts"></script>
   </body>
 </html>

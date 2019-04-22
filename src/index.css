@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  background: #111;
+}
+body {
+  font-family: monospace;
+  margin: 0;
+}
+.header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #111;
+  color: #fff;
+}
+.form {
+  margin: 0;
+}
+.loader {
+  width: 100%;
+  height: calc(100vh - 60px);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.content {
+  position: relative;
+  visibility: hidden;
+}
+.video {
+  position: absolute;
+  top: -100%;
+  visibility: hidden;
+}
+.canvas {
+  width: 100%;
+}
+.loaded .loader {
+  display: none;
+}
+.loaded .content {
+  visibility: visible;
+}
+@media (max-width: 768px) {
+  .header span {
+    display: none;
+  }
+}

@@ -1,10 +1,10 @@
 import * as posenet from "@tensorflow-models/posenet";
 import { PoseNet } from "@tensorflow-models/posenet";
+import { selectDOM } from "./dom-selectors";
 import { draw } from "./draw";
-import { domSelectors } from "./dom-selectors";
 
 let stream: MediaStream;
-domSelectors.camSelect.onchange = getStream;
+selectDOM.camSelect.onchange = getStream;
 
 function getStream(e) {
   if (stream) {
@@ -14,7 +14,7 @@ function getStream(e) {
     .getUserMedia({
       audio: false,
       video: {
-        deviceId: { exact: domSelectors.camSelect.value }
+        deviceId: { exact: selectDOM.camSelect.value }
       }
     })
     .then(gotStream);
@@ -22,23 +22,23 @@ function getStream(e) {
 
 function gotStream(stream) {
   stream = stream;
-  domSelectors.video.srcObject = stream;
+  selectDOM.video.srcObject = stream;
 }
 
 function setupVideo(): Promise<HTMLVideoElement> | null {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    domSelectors.error.innerHTML =
+    selectDOM.error.innerHTML =
       "webcam access is not supported by this browser";
     return;
   }
   return navigator.mediaDevices
     .getUserMedia({ video: { facingMode: "user" }, audio: false })
     .then(stream => {
-      domSelectors.video.srcObject = stream;
+      selectDOM.video.srcObject = stream;
       return new Promise(resolve => {
-        domSelectors.video.onloadedmetadata = () => {
-          domSelectors.video.play();
-          resolve(domSelectors.video);
+        selectDOM.video.onloadedmetadata = () => {
+          selectDOM.video.play();
+          resolve(selectDOM.video);
         };
       });
     });
@@ -75,23 +75,20 @@ function setupCameraOptions() {
         const option = document.createElement("option");
         option.value = device.deviceId;
         option.text = device.label;
-        domSelectors.camSelect.appendChild(option);
+        selectDOM.camSelect.appendChild(option);
       });
     });
-}
-
-function setLoaded() {
-  domSelectors.body.classList.add("loaded");
 }
 
 function init() {
   setupCameraOptions()
     .then(() => Promise.all([setupVideo(), setupPosenet()]))
     .then(([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
-      const { width, height } = setDimensions(video, domSelectors.canvas);
-      draw(net, video, domSelectors.canvas, width, height);
-      domSelectors.audio.play();
-      setLoaded();
+      const { width, height } = setDimensions(video, selectDOM.canvas);
+      draw(net, video, selectDOM.canvas, width, height);
+
+      selectDOM.body.classList.add("loaded");
+      selectDOM.audio.play();
     });
 }
 
