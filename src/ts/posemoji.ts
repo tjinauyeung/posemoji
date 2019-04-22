@@ -38,12 +38,12 @@ function getConstraints() {
   }
   return {
     audio: false,
-    video: { facingMode: "user" }
+    video: true
   };
 }
 
 function setupPosenet(): Promise<posenet.PoseNet> {
-  return posenet.load(0.75);
+  return posenet.load(0.5);
 }
 
 function setDimensions(
@@ -75,24 +75,25 @@ function setupCameraOptions() {
     .enumerateDevices()
     .then(getCameraDevices)
     .then(cameraDevices => {
-      cameraDevices.forEach(device => {
+      for (let i = 0; i !== cameraDevices.length; ++i) {
+        const device = cameraDevices[i];
         const option = document.createElement("option");
         option.value = device.deviceId;
-        option.text = device.label;
+        option.text =
+          device.label || `camera ${selectDOM.camSelect.length + 1}`;
         selectDOM.camSelect.appendChild(option);
-      });
+      }
     })
     .catch(e => {
       throw new Error(e);
     });
 }
 
-function startPoseMoji() {
+function start() {
   return Promise.all([setupVideo(), setupPosenet()])
     .then(([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
       const { width, height } = setDimensions(video, selectDOM.canvas);
       draw(net, video, selectDOM.canvas, width, height);
-
       // show content and start music
       selectDOM.body.classList.add("loaded");
       selectDOM.audio.play();
@@ -102,12 +103,12 @@ function startPoseMoji() {
     });
 }
 
-selectDOM.camSelect.addEventListener("change", startPoseMoji);
+selectDOM.camSelect.addEventListener("change", start);
 
 window.addEventListener("DOMContentLoaded", () => {
   try {
     setupCameraOptions();
-    startPoseMoji();
+    start();
   } catch (e) {
     selectDOM.error.innerText =
       "demo does not run on your device, try running on chrome on desktop";

@@ -18,18 +18,22 @@ const isLeftEye = (kp: Keypoint): boolean => kp.part === "leftEye";
 const isRightEye = (kp: Keypoint): boolean => kp.part === "rightEye";
 const isEye = (kp: Keypoint): boolean => isLeftEye(kp) || isRightEye(kp);
 
+let requestAnimationFrameId: number;
+
 export function draw(
   net: PoseNet,
   video: HTMLVideoElement,
   canvas: HTMLCanvasElement,
   width: number,
   height: number
-) {
+): any {
   const ctx = canvas.getContext("2d");
   const hearts = getHearts(100, width, height);
   const scaleFactor = 0.5;
   const flipHorizontal = false;
   const outputStride = 16;
+
+  cancelAnimationFrame(requestAnimationFrameId);
 
   function drawEmojis() {
     net
@@ -44,7 +48,7 @@ export function draw(
         hearts.forEach(heart => drawFloatingHearts(ctx, heart));
       });
 
-    requestAnimationFrame(drawEmojis);
+    requestAnimationFrameId = requestAnimationFrame(drawEmojis);
   }
 
   drawEmojis();
