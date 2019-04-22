@@ -90,6 +90,7 @@ function init() {
     .then(([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
       const { width, height } = setDimensions(video, domSelectors.canvas);
       draw(net, video, domSelectors.canvas, width, height);
+      domSelectors.audio.play();
       setLoaded();
     });
 }
