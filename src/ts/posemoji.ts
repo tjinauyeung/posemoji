@@ -13,11 +13,13 @@ function setupVideo(): Promise<HTMLVideoElement> | null {
 
   if (videoStream) {
     videoStream.getTracks().forEach(track => track.stop());
+    selectDOM.video.srcObject = null;
   }
 
   return navigator.mediaDevices.getUserMedia(getConstraints()).then(stream => {
     videoStream = stream;
     selectDOM.video.srcObject = stream;
+
     return new Promise(resolve => {
       selectDOM.video.onloadedmetadata = () => {
         selectDOM.video.play();
@@ -77,14 +79,18 @@ function setupCameraOptions() {
 }
 
 function init() {
-  return Promise.all([setupVideo(), setupPosenet()]).then(
-    ([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
-      const { width, height } = setDimensions(video, selectDOM.canvas);
-      draw(net, video, selectDOM.canvas, width, height);
+  return (
+    Promise.all([setupVideo(), setupPosenet()])
+      .then(([video, net]: [HTMLVideoElement, posenet.PoseNet]) => {
+        const { width, height } = setDimensions(video, selectDOM.canvas);
+        draw(net, video, selectDOM.canvas, width, height);
 
-      selectDOM.body.classList.add("loaded");
-      selectDOM.audio.play();
-    }
+        // show content and start music
+        selectDOM.body.classList.add("loaded");
+        selectDOM.audio.play();
+      })
+      // tslint:disable-next-line
+      .catch(e => console.re.log(e))
   );
 }
 
@@ -94,3 +100,6 @@ window.addEventListener("DOMContentLoaded", () => {
   setupCameraOptions();
   init();
 });
+
+// tslint:disable-next-line
+console.re.log("Connected to remote logging service");
